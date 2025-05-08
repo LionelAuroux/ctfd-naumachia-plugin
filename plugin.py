@@ -7,6 +7,7 @@ from CTFd.utils.config import is_teams_mode
 from CTFd.utils.config.visibility import challenges_visible
 from CTFd.utils.uploads import delete_file
 from CTFd.utils.user import get_ip, is_admin, authed, get_current_user, get_current_team
+from CTFd.utils.dates import ctftime
 from flask import session, abort, send_file
 from io import BytesIO
 from urllib.parse import quote
@@ -85,6 +86,8 @@ def user_can_get_config():
     if not authed():
         return False
     if not challenges_visible():
+        return False
+    if not ctftime():
         return False
     return True
 
