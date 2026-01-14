@@ -14,7 +14,7 @@ def config(app):
     '''
     REGISTRAR_HOST specifies the hostname at which the Naumachia registrar server is reachable from this host.
     '''
-    app.config['REGISTRAR_HOST'] = environ.get('REGISTRAR_HOST', "localhost")
+    app.config['REGISTRAR_HOST'] = environ.get('REGISTRAR_HOST', "172.17.0.1")
 
     '''
     REGISTRAR_PORT specifies the port on which the Naumachia registrar is available.

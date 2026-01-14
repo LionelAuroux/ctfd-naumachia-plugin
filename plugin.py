@@ -13,6 +13,7 @@ from io import BytesIO
 from urllib.parse import quote
 import json
 import logging
+import logging.handlers
 import os
 import requests
 
@@ -139,7 +140,7 @@ def send_config(app, challenge, clientname):
     config = resp.json().encode('utf-8')
     return send_file(
         BytesIO(config),
-        attachment_filename=f"{challenge}.ovpn",
+        download_name=f"{challenge}.ovpn",  # Changed from attachment_filename (deprecated)
         as_attachment=True
     )
 
@@ -169,7 +170,7 @@ def load(app):
     @app.route('/naumachia/config/<int:chalid>', methods=['GET'])
     def registrar(chalid):
         if not user_can_get_config():
-            logger.info(f"[403] Client {session.get('clientname', '<not authed>')} requested config for challenge {chal.id}: Not authorized")
+            logger.info(f"[403] Client {session.get('clientname', '<not authed>')} requested config for challenge: Not authorized")
             abort(403)
 
         if is_teams_mode():
@@ -190,7 +191,7 @@ def load(app):
             return resp
         except requests.HTTPError as err:
             if err.response.status_code != 404:
-                logger.info("[500] Config retrival failed for challenge {chal.name} and client {clientname}: {err}")
+                logger.info(f"[500] Config retrival failed for challenge {chal.name} and client {clientname}: {err}")
                 raise
 
         try:

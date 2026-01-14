@@ -1,17 +1,31 @@
 CTFd._internal.challenge.data = undefined
 
-CTFd._internal.challenge.renderer = CTFd.lib.markdown();
-
+// Compatible avec CTFd 3.5+
+CTFd._internal.challenge.renderer = null;
 
 CTFd._internal.challenge.preRender = function () { }
 
 CTFd._internal.challenge.render = function (markdown) {
-    return CTFd._internal.challenge.renderer.render(markdown)
+    // Nouvelle API CTFd utilise marked directement ou une fonction différente
+    if (typeof CTFd.lib.markdown === 'function') {
+        // Ancienne API
+        if (!CTFd._internal.challenge.renderer) {
+            CTFd._internal.challenge.renderer = CTFd.lib.markdown();
+        }
+        return CTFd._internal.challenge.renderer.render(markdown);
+    } else if (typeof marked !== 'undefined') {
+        // CTFd 3.5+ utilise marked globalement
+        return marked.parse(markdown);
+    } else if (typeof CTFd.lib.marked !== 'undefined') {
+        // Alternative
+        return CTFd.lib.marked.parse(markdown);
+    } else {
+        // Fallback: retourne le markdown tel quel
+        return markdown;
+    }
 }
 
-
 CTFd._internal.challenge.postRender = function () { }
-
 
 CTFd._internal.challenge.submit = function (preview) {
     var challenge_id = parseInt(CTFd.lib.$('#challenge-id').val())
